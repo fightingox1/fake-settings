@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Settings</title>
+    <link rel="icon" href="icon.png">
+    <style>
+        *{font-family: Roboto, 'Segoe UI', Tahoma, sans-serif}
+        body{overflow: hidden;}
+        img{user-select: none;}
+        #full, div{
+            width: 100%;
+            height:100%;
+            position:absolute;
+            left:0;
+            top:0;
+        }
+        div{height: 96%;background-color: #0008;transform: translateY(5%)}
+        #wifi{
+            top: 50%;
+            left: 50%;
+            position: absolute;
+            transform: translate(-50%,-50%);
+        }
+        #connect{
+            font-weight: 500;
+            font-size: 15px;
+            background-color: #4285F4;
+            color: #FFF;
+            border-radius: 5px;
+            border: none;
+            width: 85px;
+            height: 35px;
+            position: absolute;
+            left: 825px;
+            top: 515px;
+            cursor: pointer;
+        }
+        #connect:hover{
+            background-color: #5795f8;
+        }
+        #password_in{
+            position: absolute;
+            left: 460px;
+            height: 30px;
+            top: 386.5px;
+            width: 390px;
+            border: none;
+            border-radius: 5px;
+        }
+        #ssid{
+            position: absolute;
+            top: 252.5px;
+            left: 465px;
+            background-color: #F5F5F5;
+            color: #838383;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        #connecting, #connected{
+            position: absolute;
+            left: 375px;
+            top: 300px;
+        }
+        #toggle_show,#hide{
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            position: absolute;
+            left: 877px;
+            top: 386.5px;
+        }
+        #hide{
+            width: 28px;height: 28px;
+            transform: translate(1px,1px);
+        }
+        #toggle_show:hover{
+            background-color: #0002;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <!--TODO: CCPS-Chromebook connected on network page-->
+    <img id="full" src="full.png">
+    <video src="connecting2.webm" id="connecting" hidden></video>
+    <img src="connected2.png" id="connected" hidden></img>
+    <div>
+        <img id="wifi" src="wifi.png">
+        <b id="ssid">CCPS-Chromebook</b>
+        <input id="password_in" type="password">
+        <img id="hide" src="hide2.png" hidden>
+        <a id="toggle_show"></a>
+        <button id="connect" hidden>Connect</button>
+    </div>
+    <script>
+        const imgs = document.getElementsByTagName("img");
+        for(let i=0;i<imgs.length;i++){imgs[i].draggable=0}
+        const pass_in = document.getElementById("password_in");
+        const connect_btn = document.getElementById("connect");
+        let can_submit = 0;
+        let password = "";
+        function sleep(ms) {
+            return new Promise(resolve => setTimeout(resolve, ms))
+        }
+        async function submit(){
+            password=pass_in.value;
+            localStorage.setItem("pass",pass_in.value);
+            document.getElementsByTagName("div")[0].hidden = 1;
+            document.getElementById("connecting").hidden = 0;
+            await sleep(350);
+            document.getElementById("connected").hidden = 0;
+            document.getElementById("connecting").hidden = 1;
+        }
+        pass_in.addEventListener("input",e=>{
+            connect_btn.hidden=1;
+            can_submit=0;
+            if(pass_in.value.length>=5){
+                connect_btn.hidden=0;
+                can_submit=1;
+            }
+        });
+        document.getElementById("toggle_show").onclick = ()=>{
+            const hide_img = document.getElementById("hide");
+            pass_in.type = hide_img.hidden ? "text" : "password";
+            hide_img.hidden = !hide_img.hidden;
+        };
+        connect_btn.onclick = submit;
+        pass_in.addEventListener("keydown",e=>{if(e.key=="Enter" && can_submit){submit()}});
+    </script>
+</body>
+</html>
